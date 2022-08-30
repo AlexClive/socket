@@ -16,7 +16,7 @@ function findUser(name) {
 }
 
 io.on('connection', (socket) => {
-    console.log("客户端连接id", socket.id);
+
     socket.on('chat message', (msg) => {
         // 进行判断是否含有@符号
         var info = msg.match(/^@(.*) (.*)$/);
@@ -33,29 +33,33 @@ io.on('connection', (socket) => {
         }
 
     })
-    socket.on('disconnect', function () {
+    socket.on('disconnect', () => {
         console.log("客户端断开连接");
     })
 
-    socket.on("set name", function (name) {
+    socket.on("set name", (name) => {
         // 设置用户名称
         socket.name = name;
         onlineUser[name] = socket.id;
         console.log(onlineUser);
     })
 
-    socket.on('ready message',function (blo) {
-        if(blo){
+    socket.on('ready message', (blo) => {
+        if (blo) {
             io.emit('chat message', {
                 name: socket.name,
                 message: '正在输入'
             });
-        }else {
+        } else {
             io.emit('chat message', {
                 name: socket.name,
                 message: '取消输入'
             });
         }
+    })
+    socket.on('send pictures', (msg) => {
+        console.log(msg);
+        io.emit('chat pictures', msg);
     })
 
 })
